@@ -17,13 +17,14 @@ export default {
 	name: "app",
 	data: function () {
 		return {
-			tweet: ["No connection to server."],
+			tweet: [],
 			thisFrame: "menu",
 			selectedTweet: 0,
 			isSubmitted: false,
 			isCorrect: false,
-			currentTweet: 1,
+			currentTweet: 0,
 			correctTweet: Math.round(Math.random()),
+			refresh: 0,
 		};
 	},
 	created: async function () {
@@ -84,19 +85,29 @@ export default {
 
 			this.currentTweet++;
 			this.correctTweet = Math.round(Math.random());
+			this.refresh++
 			console.log(this.currentTweet, this.correctTweet);
 		},
 	},
 	computed: {
 		returnTweet() {
+			this.refresh;
 			console.log("calc");
-			return this.correctTweet === 1
-				? tweetList[Math.floor(Math.random() * tweetList.length)]
-				: (this.tweet[this.currentTweet % 100] || "").replace(
+			const fake = (this.tweet[this.currentTweet % 20] || "").replace(
 						/<\|startoftext\|>/,
 						""
-				  );
+				  ).replace(
+						/\"+/g,
+						`"`
+				  )
+			if (fake.length < 10) {this.correctTweet = 1}
+			return this.correctTweet === 1
+				? tweetList[Math.floor(Math.random() * tweetList.length)]
+				: fake;
 		},
+		isFinishedLoading() {
+			return this.tweet.length > 1
+		}
 	},
 	components: {
 		styleButton,
@@ -121,8 +132,8 @@ export default {
 
 					<div>
 						<styleButton
-							:isOn="true"
-							:text="`START →`"
+							:isOn="isFinishedLoading"
+							:text="isFinishedLoading ? `START →` : `Loading...`"
 							@onClick="transition(`menu`, `game`)" />
 					</div>
 				</div>
@@ -137,6 +148,9 @@ export default {
 		<div
 			id="game"
 			class="absolute top-0 left-0 flex flex-row items-center justify-center w-screen h-screen">
+			<div class="flex">
+				
+			</div>
 			<div
 				class="flex flex-col max-w-fit border-x border-x-[#2f3336] content-center h-screen top-0">
 				<div
@@ -159,10 +173,11 @@ export default {
 						<path
 							d="M20 11H7.414l4.293-4.293a1 1 0 0 0-1.414-1.414l-6 6a1 1 0 0 0 0 1.414l6 6a.996.996 0 0 0 1.414 0 1 1 0 0 0 0-1.414L7.414 13H20a1 1 0 1 0 0-2z" />
 					</svg>
-					<div class="ml-[20px] text-[20px] font-bold">Thread</div>
+					<div class="select-none ml-[20px] text-[20px] font-bold">Thread</div>
 				</div>
 			</div>
-			<div class="pl-[30px]">
+			<div class="ml-[30px]">
+				<div class="text-1xl select-none">Determine whether the displayed tweet is real, or fake.</div>
 				<styleButton :isOn="true" :text="`REAL`" @onClick="submitTweet(1)" />
 				<styleButton :isOn="true" :text="`FAKE`" @onClick="submitTweet(0)" />
 			</div>
