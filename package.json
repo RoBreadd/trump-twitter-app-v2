@@ -1,0 +1,39 @@
+{
+  "name": "trump-twitter-app-v2",
+  "version": "1.0.0",
+  "main": "dist-electron/main/index.js",
+  "description": "Trump Twitter App V2",
+  "author": "RoBreadd",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "dev": "vite",
+    "build": "vue-tsc --noEmit && vite build && electron-builder"
+  },
+  "engines": {
+    "node": "^14.18.0 || >=16.0.0"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^3.1.2",
+    "autoprefixer": "^10.4.12",
+    "electron": "^21.1.0",
+    "electron-builder": "^23.3.3",
+    "postcss": "^8.4.18",
+    "tailwindcss": "^3.1.8",
+    "typescript": "^4.8.4",
+    "vite": "^3.1.4",
+    "vite-electron-plugin": "^0.4.4",
+    "vue": "^3.2.40",
+    "vue-tsc": "^0.40.13"
+  },
+  "debug": {
+    "env": {
+      "VITE_DEV_SERVER_URL": "http://127.0.0.1:3344"
+    }
+  },
+  "dependencies": {
+    "jquery": "^3.6.1",
+    "node-powershell": "^5.0.1",
+    "socket.io-client": "^4.5.3"
+  }
+}

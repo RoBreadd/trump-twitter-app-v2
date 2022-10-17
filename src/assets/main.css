@@ -1,0 +1,28 @@
+@import "./base.css";
+
+:root {
+  --twitter-border: rgb(207, 217, 222);
+  --twitter-bg: rgb(255, 255, 255);
+  --twitter-color: rgb(0, 0, 0);
+  --twitter-color-handle: rgb(83, 100, 113);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --twitter-border: #eee #ddd #bbb;
+    --twitter-bg: #181818;
+    --twitter-color: rgb(231, 233, 234);
+    --twitter-color-handle: rgb(113, 118, 123);
+  }
+}
+
+#app {
+  max-width: 1280px;
+  margin: 0;
+
+  font-weight: normal;
+}
+
+html {
+  color: var(--twitter-color)
+}
