@@ -12,7 +12,7 @@ sio = SocketIO(app, cors_allowed_origins="*")
 def connect(sid):
     sio.emit('tweet', {'data': tweet_list})
 
-tweet_list = generate_tweet(10)
+tweet_list = generate_tweet(100)
 
 if __name__ == "__main__":
     sio.run(app, "localhost", 5000)
