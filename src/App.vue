@@ -72,16 +72,7 @@ export default {
 			this.isSubmitted = true;
 			this.isCorrect = n === this.correctTweet;
 
-			$("#answerPopup")
-				.delay(1000)
-				.fadeIn(100, () => {
-					$("#answerPopup")
-						.delay(3000)
-						.fadeOut(200, () => {
-							this.isSubmitted = false;
-							$(".twitterFrame > div").delay(1000).fadeIn(2000);
-						});
-				});
+			$("#ans").text(this.isCorrect ? "Correct!" : "Incorrect!")
 
 			this.currentTweet++;
 			this.correctTweet = Math.round(Math.random());
@@ -176,10 +167,11 @@ export default {
 					<div class="select-none ml-[20px] text-[20px] font-bold">Thread</div>
 				</div>
 			</div>
-			<div class="ml-[30px]">
+			<div class="flex ml-[30px] flex-col items-center">
 				<div class="text-1xl select-none">Determine whether the displayed tweet is real, or fake.</div>
 				<styleButton :isOn="true" :text="`REAL`" @onClick="submitTweet(1)" />
 				<styleButton :isOn="true" :text="`FAKE`" @onClick="submitTweet(0)" />
+				<div id="ans" class="mt-[16px] text-3xl select-none">Waiting...</div>
 			</div>
 		</div>
 
