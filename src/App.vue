@@ -25,21 +25,32 @@ export default {
 			currentTweet: 0,
 			correctTweet: Math.round(Math.random()),
 			refresh: 0,
+			score: 0,
+			lives: 3,
 		};
 	},
 	created: async function () {
 		nextTick(() => {
 			$("#game").fadeOut(1);
 			$("#answerPopup").fadeOut(1);
+			$("#end").fadeOut(1);
 		});
 
 		SocketioService.setupSocketConnection();
 		SocketioService.socket.on("tweet", (msg) => {
-			this.tweet = msg.data;
+			this.tweet = msg.data.filter(i => i).map(i => i.replace(
+						/<\|startoftext\|>/,
+						""
+				  ).replace(
+						/\"+/g,
+						`"`
+				  ));
 		});
+
+		this.refresh++
 	},
 	methods: {
-		transition(hide, show) {
+		transition(hide, show, callback) {
 			if (this.thisFrame === show) {
 				return;
 			}
@@ -51,6 +62,7 @@ export default {
 
 			fadeTimeout = true;
 			$(`#${hide}`).fadeOut(400, () => {
+				(callback || function(){})()
 				$(`#${show}`).fadeIn(400, () => {
 					fadeTimeout = false;
 				});
@@ -67,31 +79,46 @@ export default {
 		},
 
 		submitTweet(n) {
+			if (this.lives <= 0) {return}
+
 			console.log("Tweet submitted");
 
 			this.isSubmitted = true;
 			this.isCorrect = n === this.correctTweet;
 
-			$("#ans").text(this.isCorrect ? "Correct!" : "Incorrect!")
+			if (this.isCorrect) {this.score++} else {this.lives--}
 
-			this.currentTweet++;
+			if (this.lives <= 0) {
+				console.log("diek")
+				this.transition("game", "end")
+			}
+
+			$("#ans").text(this.isCorrect ? "Correct!" : "Incorrect!");
 			this.correctTweet = Math.round(Math.random());
 			this.refresh++
 			console.log(this.currentTweet, this.correctTweet);
 		},
+
+		restart() {
+			this.transition(`end`, `menu`, () => {
+				this.score = 0
+				this.lives = 3
+				this.currentTweet++
+			})
+		}
 	},
 	computed: {
 		returnTweet() {
 			this.refresh;
-			console.log("calc");
-			const fake = (this.tweet[this.currentTweet % 20] || "").replace(
-						/<\|startoftext\|>/,
-						""
-				  ).replace(
-						/\"+/g,
-						`"`
-				  )
-			if (fake.length < 10) {this.correctTweet = 1}
+
+			if (this.tweet.length < 2) {return "error lol"}
+
+			let recalc = () => {
+				this.currentTweet++
+				let f = this.tweet[this.currentTweet % this.tweet.length] || ""
+				return f
+			}
+			const fake = recalc()
 			return this.correctTweet === 1
 				? tweetList[Math.floor(Math.random() * tweetList.length)]
 				: fake;
@@ -139,9 +166,6 @@ export default {
 		<div
 			id="game"
 			class="absolute top-0 left-0 flex flex-row items-center justify-center w-screen h-screen">
-			<div class="flex">
-				
-			</div>
 			<div
 				class="flex flex-col max-w-fit border-x border-x-[#2f3336] content-center h-screen top-0">
 				<div
@@ -173,6 +197,20 @@ export default {
 				<styleButton :isOn="true" :text="`FAKE`" @onClick="submitTweet(0)" />
 				<div id="ans" class="mt-[16px] text-3xl select-none">Waiting...</div>
 			</div>
+			<div class="absolute top-[2vh] right-[2vw] text-2xl text-right">
+				Score: {{ score }}<br>Lives: {{ lives }}
+			</div>
+		</div>
+
+		<div id="end" class="absolute top-0 left-0 flex flex-col items-center justify-center w-screen h-screen">
+			<div class="text-6xl text-center leading-snug font-bold italic">
+				Game Over!<br>
+				Final Score: {{ score }}
+			</div>
+			<styleButton
+				:isOn="lives <= 0"
+				:text="`RETRY`"
+				@onClick="restart()" />
 		</div>
 
 		<div
@@ -180,10 +218,13 @@ export default {
 			<div class="flex">
 				<IconNavi
 					:active="thisFrame === `menu`"
-					@onClick="transition(thisFrame, `menu`)" />
+					@onClick="(lives >= 0 ? transition : function(){})(thisFrame, `menu`)" />
 				<IconNavi
 					:active="thisFrame === `game`"
-					@onClick="transition(thisFrame, `game`)" />
+					@onClick="(lives >= 0 ? transition : function(){})(thisFrame, `game`)" />
+				<IconNavi
+					:active="thisFrame === `end`"
+					@onClick="transition(thisFrame, `end`)" />
 			</div>
 		</div>
 	</div>

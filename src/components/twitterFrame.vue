@@ -10,7 +10,7 @@ export default {
 	<div
 		class="flex relative w-[600px] block left-0 transition-all ease-out duration-1000 mx-4 twitterFrame">
 		<div
-			class="pointer-events-none top-0 relative h-full pt-3 px-4 pb-4 font-sans text-lg font-bold leading-6 border-solid border-t overflow-hidden border-t-[#2f3336] transition-all">
+			class="grow pointer-events-none top-0 relative h-full pt-3 px-4 pb-4 font-sans text-lg font-bold leading-6 border-solid border-t overflow-hidden border-t-[#2f3336] transition-all">
 			<div class="flex mb-3">
 				<img
 					src="https://pbs.twimg.com/profile_images/736392853992001537/eF4LJLkn_400x400.jpg"
