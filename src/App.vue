@@ -103,6 +103,7 @@ export default {
 			this.transition(`end`, `menu`, () => {
 				this.score = 0
 				this.lives = 3
+				$("#ans").text("Waiting...");
 				this.currentTweet++
 			})
 		}
